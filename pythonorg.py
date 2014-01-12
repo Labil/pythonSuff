@@ -76,4 +76,37 @@ f(0) #outputs 34
 f(1) #outputs 35
 #You can also pass a lambda as an argument into a function
 
+# Chapter 5.1.3 Functional programming tools
+#filter(), map(), reduce()
 
+#filter(function, sequence) returns a sequence consisting of those items
+#from the sequence for which function(item) is true (If sequence is a string of tuple
+# the result will be the same type; otherwise, it is always a list.)
+#Ex: Compute a sequence of numbers not divisible by 2 or 3
+def f(x): return x % 2 != 0 and x % 3 != 0
+
+a = filter(f, range(2, 25))
+print a
+
+#map(function, sequence) calls function(item) for each of the sequence's items
+#returns a list of the return values
+#Ex: compute cubes:
+def cube(x) : return x*x*x
+a = map(cube, range(1,11))
+print a
+
+#Note: More than one sequence may be passed; the function must then have as many arguments
+# as there are sequences and is called with the corresponding item from each seq.
+#(or None if some seqence is shorter than another)
+seq = range(9)
+def add(x, y): return x + y
+a = map(add, seq, seq)
+print a
+
+#reduce(function, sequence) returns a single value from calling the binary
+#function function on the first two items of the sequence, then on the result and
+#the next item, and so on. 
+#Ex: compute sum of numbers 1 through 10:
+def add(x, y): return x + y
+a = reduce(add, range(1, 11))
+print a
