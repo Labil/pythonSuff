@@ -1,6 +1,6 @@
 #Examples & excersises from Python for Data Analysis by Wes McKinn
 import json
-import numpy as numpy
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, draw, show
@@ -39,7 +39,7 @@ def top_counts(count_dict, n=10):
 #top_counts(counts)
 counts.most_common(10)
 
-print counts
+#print counts
 
 #Using pandas to do the same as above!
 frame = DataFrame(records)
@@ -52,9 +52,37 @@ clean_tz = frame['tz'].fillna('Missing') #replaces NA values
 clean_tz[clean_tz == ''] = 'Unknown'
 
 tz_counts = clean_tz.value_counts()
-print tz_counts[:10]
+#print tz_counts[:10]
 
 #Making horizontal bar plot using the plot method on the counts objects:
 chart = tz_counts[:10].plot(kind='barh', rot=0)
 #Must add show() if not it will not display anything!
+#show()
+
+results = Series([x.split()[0] for x in frame.a.dropna()])
+#print results[:5]
+os_counts = results.value_counts()[:8]
+
+chart2 = os_counts[:10].plot(kind='barh', rot=0)
+#show()
+
+#Exclude from data values that are nll
+cframe = frame[frame.a.notnull()]
+#Computes value wheter each row is Windows or not:
+operating_system = np.where(cframe['a'].str.contains('Windows'), 'Windows', 'Not Windows')
+by_tz_os = cframe.groupby(['tz', operating_system])
+agg_counts = by_tz_os.size().unstack().fillna(0)
+
+#Select top overall time zones by constructing an indirect index array from the
+#row counts in agg_counts
+indexes = agg_counts.sum(1).argsort()
+
+#Use take to select the rows in that order, and slice off the last 10 rows:
+count_subset = agg_counts.take(indexes)[-10:]
+print count_subset
+
+#count_subset.plot(kind='barh', stacked=True)
+#Normalize to sum up to 1 and plot again to make it easier to see relative percentage
+normed_subset = count_subset.div(count_subset.sum(1), axis=0)
+normed_subset.plot(kind='barh', stacked=True)
 show()
